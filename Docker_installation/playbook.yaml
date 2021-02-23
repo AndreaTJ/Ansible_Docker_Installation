@@ -44,5 +44,5 @@
       append: yes
 
   # Reset the connection to ensure the user can complete docker commands.
-	- name: "Reset session"
+  - name: "Reset session"
     meta: reset_connection
