@@ -1,0 +1,48 @@
+- hosts: localhost 
+  connection: local
+  become: true 
+  tasks: 
+  - name: Install a list of packages
+    apt:
+      pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3
+      - python3-pip
+      - python-setuptools    
+
+  #Get the Docker APT key located here - https://download.docker.com/linux/ubuntu/gpg
+  - name: Add Docker GPG apt Key
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+  # Add the APT repo - "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+  - name: Add the APT repo
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+      state: present
+
+  #Install docker-ce using APT
+  - name: Install docker-ce using APT
+    apt:
+      name: docker-ce
+      state: present
+
+  # Extras - Install the Docker pip package (Make sure Ansible is using pip3)
+  - name: Install Docker Module for Python
+    pip:
+      name: docker
+      executable: pip3
+
+  # Extras - Add your user to the docker group
+  - name: Add your user to the docker group
+    user:
+      name: andrea_torres_gcp
+      group: docker
+      append: yes
+
+  # Reset the connection to ensure the user can complete docker commands.
+	- name: "Reset session"
+    meta: reset_connection
